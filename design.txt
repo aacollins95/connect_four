@@ -1,0 +1,33 @@
+#'\xE2\x97\x8f' black
+#'\xE2\x97\x8B' white
+
+Okay so this is just some thoughts on how to make connect four
+
+ORIGIN = (0,0)
+coords will be X,Y NOT row,col
+fuck row,col
+
+Might want to make a Column class
+  height 6
+  add piece
+
+
+
+Board would be Seven Columns
+
+5
+4
+3
+2
+1
+0   1   2   3   4   5   6
+
+
+Piece class would be good as well
+Maybe piece should be a slot class, can have status (0,1,2)
+  class variable, lists created slots in a flat array
+  knows which pieces/slots are adjacent to itself
+  to_s to display whats inside (space, white, emtpy circle)
+
+How will the board update itself when pieces are added?
+  Well, it only needs a 2D
