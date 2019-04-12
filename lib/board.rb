@@ -9,14 +9,15 @@ class Board
 
   def check_win(col)
     root = last_placed(col)
-    adj = root.adj_matches
-    if adj.length > 0
-      connect_fours = 0
-      adj.each { |slot,dir| connect_fours += 1 if root.check_line(dir) }
-      return connect_fours > 0
-    else
-      return false
-    end
+    pointers = root.match_dirs
+    puts pointers
+    # if pointers.length > 0
+    #   connect_4s = 0
+    #   pointers.each { |pos,dir| connect_4s += 1 if root.check_line(dir) }
+    #   return connect_fours > 0
+    # else
+    #   return false
+    # end
   end
 
 
@@ -62,7 +63,7 @@ end
 
 class Slot
   attr_reader :pos, :status
-  @@slots =[]
+  @@slots = Hash.new
 
   def initialize(x,y)
     #Slots: know which slots have been made
@@ -70,26 +71,21 @@ class Slot
     #knows what they contain (status)
     @pos = [x,y]
     @status = 0
-    @@slots.push(self)
+    @@slots[@pos] = self
   end
 
-  def adj_matches
-    #returns hash of k=adjMatchedSlot, v=(dir to get there)
+  def match_dirs
+    #returns hash: poistion that was found, val is direction it
+    #took to get there
     dirs = [[+1,0],[+1,-1],[0,-1],[-1,-1],[-1,0],[-1,+1],[0,+1],[+1,+1]]
-    height,width = 6,7
-    matches = Hash.new
-    dirs.each do |dir| matches[[@pos[0]+dir[0],@pos[1]+dir[1]]] = dir end
-    #matches key is the new location, val is dir it took to get there
-    on_board = matches.select do |k,v|
-      self.on_board(k)
-    end
-    adj_slots = Hash.new
-    @@slots.each do |slot|
-      if on_board.include?(slot.pos) && slot.status == self.status
-        adj_slots[slot] = on_board[slot.pos]
-      end
-    end
-    return adj_slots
+    bloom = Hash.new
+    dirs.each do |dir| bloom[advance(dir)] = dir end
+    #bloom key is the new pos, val is dir it took to get there
+    on_board_bloom = bloom.select do |pos,dir| self.on_board(pos) end
+    matches = on_board_bloom.select { |pos,dir|
+      @@slots[pos].status == @status
+    }
+    return matches
   end
 
   def check_dir(dir)
@@ -120,11 +116,7 @@ class Slot
 
   def advance(dir)
     next_pos = [@pos[0]+dir[0],@pos[1]+dir[1]]
-    if on_board(next_pos)
-      return next_pos
-    else
-      return [-1,-1]
-    end
+    return next_pos
   end
 
   def on_board(pos)
