@@ -103,8 +103,9 @@ class Slot
 
   def check_line(dir)
     #checks matches in the dir and reverse dir
-    puts check_dir(dir)
-    return false
+    rev_dir = [-1*dir[0],-1*dir[1]]
+    line_matches = check_dir(dir) + check_dir(rev_dir)
+    return line_matches > 2
   end
 
   def advance(dir)

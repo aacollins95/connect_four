@@ -20,8 +20,10 @@ class Game
       @board.columns[col].place(@player)
       draw_board
       win = @board.check_win(col)
+      win_player = @player if win
       change_player
     end
+    draw_ending(win_player)
   end
 
   def change_player
@@ -51,7 +53,7 @@ class Game
 
   #aesthetics
   def draw_board
-    print "\n"*15
+    print "\n"*16
     (0...@height).reverse_each do |row| draw_row(row) end
     print " "
     (1..@width).each do |i| print "#{i}  " end
@@ -66,6 +68,10 @@ class Game
       print " #{char} "
     end
     print "\n"*2
+  end
+
+  def draw_ending(player)
+    puts "Player #{player} wins the game!"
   end
 
   def char(c)
