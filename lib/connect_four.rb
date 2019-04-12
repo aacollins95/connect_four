@@ -49,8 +49,6 @@ class Game
     return col-1
   end
 
-
-
   #aesthetics
   def draw_board
     print "\n"*15

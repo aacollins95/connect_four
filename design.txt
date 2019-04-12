@@ -16,15 +16,10 @@ Might want to make a Column class
 Board would be Seven Columns
 
 5
-
 4
-
 3
-
 2
-
-1
-
+1 
 0   1   2   3   4   5   6
 
 

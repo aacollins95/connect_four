@@ -9,13 +9,10 @@ class Board
 
   def check_win(col)
     root = last_placed(col)
-    #matches = root.adj_matches
     adj = root.adj_matches
     if adj.length > 0
       connect_fours = 0
-      adj.each do |slot,dir|
-        connect_fours += 1 if slot.check_line(dir)
-      end
+      adj.each { |slot,dir| connect_fours += 1 if root.check_line(dir) }
       return connect_fours > 0
     else
       return false
@@ -84,8 +81,7 @@ class Slot
     dirs.each do |dir| matches[[@pos[0]+dir[0],@pos[1]+dir[1]]] = dir end
     #matches key is the new location, val is dir it took to get there
     on_board = matches.select do |k,v|
-      0 <= k[0] && k[0] < width &&
-      0 <= k[1] && k[1] < height
+      self.on_board(k)
     end
     adj_slots = Hash.new
     @@slots.each do |slot|
@@ -96,25 +92,44 @@ class Slot
     return adj_slots
   end
 
-  def check_line(dir)
+  def check_dir(dir)
+    #gets directions where there's a match adjacent to root
     #checks a match for a connect four in a direction
-    matches_needed = 2
     matches = 0
-    player= @status
+    player = @status
     node = self
-    matches_needed.times {
+    runs = 0
+    until node.status != player || runs > 2
+      runs += 1
+      next_pos = node.advance(dir)
       @@slots.each do |slot|
-        if node.advance(dir) == slot.pos && slot.status == player
+        if next_pos == slot.pos
           matches += 1
           node = slot
         end
       end
-    }
-    return matches == 2
+      puts node.status != player
+    end
+    return matches
+  end
+
+  def check_line(dir)
+    puts check_dir(dir)
+    return false
   end
 
   def advance(dir)
-    return [@pos[0]+dir[0],@pos[1]+dir[1]]
+    next_pos = [@pos[0]+dir[0],@pos[1]+dir[1]]
+    if on_board(next_pos)
+      return next_pos
+    else
+      return [-1,-1]
+    end
+  end
+
+  def on_board(pos)
+    height, width = 6,7
+    return (0 <= pos[0] && pos[0] < width && 0 <= pos[1] && pos[1] < height)
   end
 
   def fill(player)
