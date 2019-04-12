@@ -40,3 +40,4 @@ WIN CHECKING
 changes @@slots to be a hash of pos=>slot
 NoW I cAn sEaRcH @@slots bY pOs!!!
 adj_matches is now match_dirs, which checks slots by position
+check_dirs refactored
